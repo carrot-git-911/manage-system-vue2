@@ -1,0 +1,19 @@
+@import './variables.scss';
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+#app {
+  height: 100%;
+}
+
+.clearfix::after {
+  content: '';
+  display: block;
+  clear: both;
+}
