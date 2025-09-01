@@ -9,9 +9,9 @@
     </div>
     
     <!-- 页面标题 -->
-    <div class="page-header">
+    <!-- <div class="page-header">
       <h2 class="page-title">{{ pageTitle }}</h2>
-    </div>
+    </div> -->
     
     <!-- 主要内容区域 -->
     <div class="content-wrapper">

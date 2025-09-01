@@ -1,12 +1,13 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import Layout from '@/components/common/Layout/index.vue';
 
 Vue.use(Router);
 
 export const constantRoutes = [
   {
     path: '/login',
-    component: () => import('@/views/login/index.vue'),
+    component: () => import('@/views/Login/index.vue'),
     meta: {
       title: '登录',
       hidden: true,
@@ -23,11 +24,57 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
+    redirect: '/dashboard',
     meta: {
-      title: '首页',
+      hidden: true,
+      requiresAuth: true,
+    },
+    children: [
+      {
+        path: '/dashboard',
+        component: () => import('@/views/Dashboard/index.vue'),
+        meta: {
+          title: '首页',
+        },
+      },
+    ]
+  },
+  {
+    path: '/user',
+    component: Layout,
+    meta: {
+      title: '用户管理',
+      requiresAuth: true,
+    },
+    children: [
+      {
+        path: '/user/list',
+        component: () => import('@/views/user/List.vue'),
+        meta: {
+          title: '用户列表',
+          requiresAuth: true,
+          icon: 'el-icon-user-solid',
+        },
+      },
+      {
+        path: '/user/add',
+        component: () => import('@/views/user/Add.vue'),
+        meta: {
+          title: '添加用户',
+          requiresAuth: true,
+          icon: 'el-icon-plus'
+        },
+      },
+    ]
+  },
+  // 404 重定向必须放在最后
+  {
+    path: '*',
+    redirect: '/404',
+    meta: {
       hidden: true,
     },
-  }
+  },
 ]
 
 
@@ -45,21 +92,21 @@ export const resetRouter = () => {
 };
 
 // 路由守卫
-router.beforeEach((to, from, next) => {
-  // 检查用户是否已登录
-  const token = localStorage.getItem('token');
+// router.beforeEach((to, from, next) => {
+//   // 检查用户是否已登录
+//   const token = localStorage.getItem('token');
 
-  // 需要登录的页面
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+//   // 需要登录的页面
+//   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 
-  if (requiresAuth && !token) {
-    next('/login');
-  } else if (token && to.path === '/login') {
-    next('/');
-  } else {
-    next();
-  }
-});
+//   if (requiresAuth && !token) {
+//     next('/login');
+//   } else if (token && to.path === '/login') {
+//     next('/');
+//   } else {
+//     next();
+//   }
+// });
 
 // 路由守卫二
 // const whiteList = ['/login', '/404'];

@@ -102,6 +102,14 @@ export default {
       ]
     }
   },
+  computed: {
+    // routes() {
+    //   // 从路由配置中获取菜单数据
+    //   return this.$router.options.routes.filter(route => 
+    //     !route.meta?.hidden && route.children
+    //   )
+    // }
+  },
   methods: {
     /**
      * 处理菜单选择事件
