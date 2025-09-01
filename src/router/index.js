@@ -1,8 +1,24 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Layout from '@/components/common/Layout/index.vue';
+import { baseRoutes } from './routes/base';
+import { userRoutes } from './routes/user';
 
 Vue.use(Router);
+
+// 基础路由
+// const constantRoutes = [
+//   ...baseRoutes,
+//   // 404页面必须放在最后
+//   { path: '*', redirect: '/404', hidden: true }
+// ]
+
+// 异步路由
+// const asyncRoutes = [
+//   ...userRoutes,
+//   // 404页面必须放在最后
+//   { path: '*', redirect: '/404', hidden: true }
+// ]
 
 export const constantRoutes = [
   {
@@ -32,7 +48,7 @@ export const constantRoutes = [
     children: [
       {
         path: '/dashboard',
-        component: () => import('@/views/Dashboard/index.vue'),
+        component: () => import('@/views/Dashboard/index.vue'), // TODO: 文件夹名字大小写问题
         meta: {
           title: '首页',
         },
@@ -45,6 +61,7 @@ export const constantRoutes = [
     meta: {
       title: '用户管理',
       requiresAuth: true,
+      icon: 'el-icon-user'
     },
     children: [
       {

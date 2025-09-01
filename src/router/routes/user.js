@@ -1,24 +1,33 @@
 import Layout from '@/components/common/Layout/index.vue'
 
-const userRoutes = [
-  {
+export const userRoutes = [
+ {
     path: '/user',
-    name: 'User',
     component: Layout,
     meta: {
+      title: '用户管理',
       requiresAuth: true,
-      title: '用户管理'
+      icon: 'el-icon-user'
     },
     children: [
       {
         path: '/user/list',
-        name: 'UserList',
-        component: () => import('@/views/User/List.vue'),
+        component: () => import('@/views/user/List.vue'),
         meta: {
+          title: '用户列表',
           requiresAuth: true,
-          title: '用户列表'
-        }
-      }
+          icon: 'el-icon-user-solid',
+        },
+      },
+      {
+        path: '/user/add',
+        component: () => import('@/views/user/Add.vue'),
+        meta: {
+          title: '添加用户',
+          requiresAuth: true,
+          icon: 'el-icon-plus'
+        },
+      },
     ]
-  }
+  },
 ]

@@ -38,77 +38,77 @@ export default {
       activeIndex: '/',
       isCollapse: false,
       // 示例菜单数据
-      routes: [
-        {
-          path: '/dashboard',
-          name: 'Dashboard',
-          meta: {
-            title: '仪表盘',
-            icon: 'el-icon-s-home'
-          }
-        },
-        {
-          path: '/user',
-          name: 'User',
-          meta: {
-            title: '用户管理',
-            icon: 'el-icon-user'
-          },
-          children: [
-            {
-              path: '/user/list',
-              name: 'UserList',
-              meta: {
-                title: '用户列表',
-                icon: 'el-icon-user-solid'
-              }
-            },
-            {
-              path: '/user/add',
-              name: 'UserAdd',
-              meta: {
-                title: '添加用户',
-                icon: 'el-icon-plus'
-              }
-            }
-          ]
-        },
-        {
-          path: '/system',
-          name: 'System',
-          meta: {
-            title: '系统管理',
-            icon: 'el-icon-setting'
-          },
-          children: [
-            {
-              path: '/system/menu',
-              name: 'SystemMenu',
-              meta: {
-                title: '菜单管理',
-                icon: 'el-icon-menu'
-              }
-            },
-            {
-              path: '/system/role',
-              name: 'SystemRole',
-              meta: {
-                title: '角色管理',
-                icon: 'el-icon-s-custom'
-              }
-            }
-          ]
-        }
-      ]
+      // routes: [
+      //   {
+      //     path: '/dashboard',
+      //     name: 'Dashboard',
+      //     meta: {
+      //       title: '仪表盘',
+      //       icon: 'el-icon-s-home'
+      //     }
+      //   },
+      //   {
+      //     path: '/user',
+      //     name: 'User',
+      //     meta: {
+      //       title: '用户管理',
+      //       icon: 'el-icon-user'
+      //     },
+      //     children: [
+      //       {
+      //         path: '/user/list',
+      //         name: 'UserList',
+      //         meta: {
+      //           title: '用户列表',
+      //           icon: 'el-icon-user-solid'
+      //         }
+      //       },
+      //       {
+      //         path: '/user/add',
+      //         name: 'UserAdd',
+      //         meta: {
+      //           title: '添加用户',
+      //           icon: 'el-icon-plus'
+      //         }
+      //       }
+      //     ]
+      //   },
+      //   {
+      //     path: '/system',
+      //     name: 'System',
+      //     meta: {
+      //       title: '系统管理',
+      //       icon: 'el-icon-setting'
+      //     },
+      //     children: [
+      //       {
+      //         path: '/system/menu',
+      //         name: 'SystemMenu',
+      //         meta: {
+      //           title: '菜单管理',
+      //           icon: 'el-icon-menu'
+      //         }
+      //       },
+      //       {
+      //         path: '/system/role',
+      //         name: 'SystemRole',
+      //         meta: {
+      //           title: '角色管理',
+      //           icon: 'el-icon-s-custom'
+      //         }
+      //       }
+      //     ]
+      //   }
+      // ]
     }
   },
   computed: {
-    // routes() {
-    //   // 从路由配置中获取菜单数据
-    //   return this.$router.options.routes.filter(route => 
-    //     !route.meta?.hidden && route.children
-    //   )
-    // }
+    routes() {
+      // 从路由配置中获取菜单数据
+      return this.$router.options.routes.filter(route => 
+        !route.meta?.hidden && route.children
+      )
+    }
   },
   methods: {
     /**
