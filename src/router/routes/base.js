@@ -4,7 +4,7 @@ export const baseRoutes = [
    {
     path: '/login',
     name: 'Login',
-    component: () => import('@/views/Login/Login.vue'),
+    component: () => import('@/views/Login/index.vue'),
     hidden: true,
     meta: {
       requiresAuth: false,
@@ -14,7 +14,7 @@ export const baseRoutes = [
   {
     path: '/404',
     name: '404',
-    component: () => import('@/views/404/404.vue'),
+    component: () => import('@/views/404/index.vue'),
     hidden: true,
     meta: {
       requiresAuth: false,

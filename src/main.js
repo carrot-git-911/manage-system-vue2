@@ -5,11 +5,16 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import '@/assets/styles/index.scss';
 
-Vue.use(ElementUI);
+// 导入MSW启动函数
+import { startMocking } from './mocks/browser'
 
 Vue.config.productionTip = false;
-  
-new Vue({
-  router,
-  render: (h) => h(App),
-}).$mount('#app');
+Vue.use(ElementUI);
+
+// 启动MSW Mock服务
+startMocking().then(() => {
+  new Vue({
+    router,
+    render: (h) => h(App),
+  }).$mount('#app');
+});
