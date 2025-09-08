@@ -1,8 +1,8 @@
-import Vue from 'vue';
-import Router from 'vue-router';
-import Layout from '@/components/common/Layout/index.vue';
-import { baseRoutes } from './routes/base';
-import { userRoutes } from './routes/user';
+import Vue from "vue";
+import Router from "vue-router";
+import Layout from "@/components/common/Layout/index.vue";
+// import { baseRoutes } from "./routes/base";
+// import { userRoutes } from "./routes/user";
 
 Vue.use(Router);
 
@@ -22,84 +22,84 @@ Vue.use(Router);
 
 export const constantRoutes = [
   {
-    path: '/login',
-    component: () => import('@/views/Login/index.vue'),
+    path: "/login",
+    component: () => import("@/views/Login/index.vue"),
     meta: {
-      title: '登录',
+      title: "登录",
       hidden: true,
     },
   },
   {
-    path: '/404',
-    component: () => import('@/views/404/index.vue'),
+    path: "/404",
+    component: () => import("@/views/404/index.vue"),
     meta: {
-      title: '404',
+      title: "404",
       hidden: true,
     },
   },
   {
-    path: '/',
+    path: "/",
     component: Layout,
-    redirect: '/dashboard',
+    redirect: "/dashboard",
     meta: {
       hidden: true,
       requiresAuth: true,
     },
     children: [
       {
-        path: '/dashboard',
-        component: () => import('@/views/Dashboard/index.vue'), // TODO: 文件夹名字大小写问题
+        path: "/dashboard",
+        component: () => import("@/views/Dashboard/index.vue"), // TODO: 文件夹名字大小写问题
         meta: {
-          title: '首页',
+          title: "首页",
         },
       },
-    ]
+    ],
   },
   {
-    path: '/user',
+    path: "/user",
     component: Layout,
     meta: {
-      title: '用户管理',
+      title: "用户管理",
       requiresAuth: true,
-      icon: 'el-icon-user'
+      icon: "el-icon-user",
     },
     children: [
       {
-        path: '/user/list',
-        component: () => import('@/views/user/List.vue'),
+        path: "/user/list",
+        component: () => import("@/views/user/List.vue"),
         meta: {
-          title: '用户列表',
+          title: "用户列表",
           requiresAuth: true,
-          icon: 'el-icon-user-solid',
+          icon: "el-icon-user-solid",
         },
       },
       {
-        path: '/user/add',
-        component: () => import('@/views/user/Add.vue'),
+        path: "/user/add",
+        component: () => import("@/views/user/Add.vue"),
         meta: {
-          title: '添加用户',
+          title: "添加用户",
           requiresAuth: true,
-          icon: 'el-icon-plus'
+          icon: "el-icon-plus",
         },
       },
-    ]
+    ],
   },
   // 404 重定向必须放在最后
   {
-    path: '*',
-    redirect: '/404',
+    path: "*",
+    redirect: "/404",
     meta: {
       hidden: true,
     },
   },
-]
+];
 
-
-const createRouter = () => new Router({
-  mode: 'history',
-  scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes,
-});
+const createRouter = () =>
+  new Router({
+    mode: "history",
+    scrollBehavior: () => ({ y: 0 }),
+    routes: constantRoutes,
+  });
 
 const router = createRouter();
 
@@ -126,19 +126,23 @@ export const resetRouter = () => {
 // });
 
 // 路由守卫二
-// const whiteList = ['/login', '/404'];
+const whiteList = ["/login", "/404"];
 
-// router.beforeEach((to, from, next) => {
-//   if (whiteList.includes(to.path)) {
-//     next();
-//   } else {
-//     const token = localStorage.getItem('token');
-//     if (token) {
-//       next();
-//     } else {
-//       next('/login');
-//     }
-//   }
-// });
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem("token");
+  if (whiteList.includes(to.path)) {
+    if (token && to.path === "/login") {
+      next("/dashboard");
+    } else {
+      next();
+    }
+  } else {
+    if (token) {
+      next();
+    } else {
+      next("/login");
+    }
+  }
+});
 
 export default router;

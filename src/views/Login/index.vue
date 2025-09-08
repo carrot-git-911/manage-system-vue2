@@ -1,83 +1,116 @@
 <template>
   <div class="login-container">
-    <div class="login-background">
-      <!-- 背景装饰元素 -->
-    </div>
-    <div class="login-card">
-      <div class="login-header">
-        <!-- LOGO和标题 -->
-        <div class="login-logo">
-          <div class="logo-icon">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-              <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-              <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-            </svg>
+    <div class="login-left">图片占位</div>
+    <div class="login-right">
+      <div class="login-right-content">
+        <!-- 登录表单 -->
+        <div class="login-form-wrapper">
+          <div class="logo">
+            <img src="@/assets/logo.png" alt="Shipla" />
           </div>
+          <h2>登录Shipla ERP 后台管理系统</h2>
+          <el-form
+            ref="loginForm"
+            :model="loginForm"
+            :rules="loginRules"
+            label-width="120px"
+          >
+            <el-form-item prop="username" label="用户名或邮箱">
+              <el-input
+                v-model="loginForm.username"
+                placeholder="请输入用户名或邮箱"
+              />
+            </el-form-item>
+            <el-form-item prop="password" label="密码">
+              <el-input
+                v-model="loginForm.password"
+                placeholder="请输入密码"
+                type="password"
+              />
+            </el-form-item>
+            <el-form-item>
+              <!-- <el-checkbox v-model="rememberPassword" style="margin-left: 10px"
+                >记住密码</el-checkbox
+              >
+              <el-link type="primary" style="margin-left: 20px"
+                >忘记密码</el-link
+              > -->
+            </el-form-item>
+            <el-form-item>
+              <el-button
+                type="primary"
+                style="width: 100%"
+                @click="login"
+                :loading="loginLoading"
+                >登录</el-button
+              >
+            </el-form-item>
+          </el-form>
         </div>
-        <div class="login-title">
-          管理系统登录
-        </div>
-        <div class="login-subtitle">
-          欢迎回来，请输入您的凭据
-        </div>
-      </div>
-      <!-- 登录表单 -->
-      <div class="login-form">
-        <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
-          <el-form-item label="用户名" prop="username">
-            <el-input v-model="form.username" placeholder="请输入用户名"></el-input>
-          </el-form-item>
-          <el-form-item label="密码" prop="password">
-            <el-input v-model="form.password" placeholder="请输入密码" type="password"></el-input>
-          </el-form-item>
-          <!-- 登录按钮 -->
-          <el-form-item>
-            <el-button type="primary" @click="login">登录</el-button>
-          </el-form-item>
-        </el-form>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { login } from '@/api/auth'
-import { rules } from 'eslint-config-prettier'
 export default {
-  name: 'Login',
+  name: "Login",
   data() {
     return {
-      form: {
-        username: '',
-        password: ''
+      loginForm: {
+        username: "admin",
+        password: "123456",
       },
-      rules: {
+      loginRules: {
         username: [
-          { required: true, message: '请输入用户名或邮箱', trigger: 'blur' },
-          { min: 3, message: '用户名至少3个字符', trigger: 'blur' }
+          { required: true, message: "请输入用户名或邮箱", trigger: "blur" },
+          { min: 3, message: "用户名至少3个字符", trigger: "blur" },
         ],
         password: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 6, message: '密码至少6个字符', trigger: 'blur' }
-        ]
+          { required: true, message: "请输入密码", trigger: "blur" },
+          { min: 6, message: "密码至少6个字符", trigger: "blur" },
+        ],
       },
       showPassword: false,
       rememberPassword: false,
-      loginLoading: false
-    }
+      loginLoading: false,
+    };
   },
   methods: {
     async login() {
-      try {
-        const res = await login(this.form)
-        console.log(res)
-      } catch (error) {
-        console.log(error)
+      // 表单验证
+      const valid = await this.$refs.loginForm.validate().catch(() => false);
+      if (!valid) {
+        return;
       }
-    }
-  }
-}
+      this.loginLoading = true;
+      try {
+        // 使用 Vuex user 模块进行登录
+        const res = await this.$store.dispatch("user/login", this.loginForm);
+
+        console.log(res);
+
+        this.$message({
+          message: "登录成功",
+          type: "success",
+        });
+
+        // 可选：获取用户信息
+        await this.$store.dispatch("user/getUserInfo");
+
+        // 登录成功，跳转到首页
+        // this.$router.push({ path: "/dashboard" });
+      } catch (error) {
+        this.$message({
+          message: error.message || "登录失败",
+          type: "error",
+        });
+      } finally {
+        this.loginLoading = false;
+      }
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -88,34 +121,49 @@ export default {
   align-items: center;
   height: 100vh;
   background-color: #f5f5f5;
-  // background-color: red;
-  .login-card {
-    width: 600px;
-    height: 500px;
+  .login-left {
+    width: 50%;
+    height: 100%;
     background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    .login-header {
+    border-radius: 10px 0 0 10px;
+    .login-left-content {
+      width: 100%;
+      height: 100%;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100px;
-      .login-logo {
-        width: 50px;
-        height: 50px;
-        img {
-          width: 100%;
-          height: 100%;
+    }
+  }
+  .login-right {
+    width: 50%;
+    height: 100%;
+    background-color: #fff;
+    border-radius: 0 10px 10px 0;
+    .login-right-content {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      .login-form-wrapper {
+        width: 400px;
+        height: 400px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        .logo {
+          width: 40px;
+          height: 40px;
+          margin-bottom: 20px;
+          img {
+            width: 100%;
+            height: 100%;
+          }
         }
       }
-      .login-title {
-        font-size: 24px;
-        font-weight: bold;
-        margin-left: 10px;
-      }
-    }
-    .login-form {
-      padding: 20px;
     }
   }
 }
