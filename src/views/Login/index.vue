@@ -1,6 +1,8 @@
 <template>
   <div class="login-container">
-    <div class="login-left">图片占位</div>
+    <div class="login-left">
+      <img src="@/assets/images/login_bg.png" alt="">
+    </div>
     <div class="login-right">
       <div class="login-right-content">
         <!-- 登录表单 -->
@@ -99,7 +101,7 @@ export default {
         await this.$store.dispatch("user/getUserInfo");
 
         // 登录成功，跳转到首页
-        // this.$router.push({ path: "/dashboard" });
+        this.$router.push({ path: "/dashboard" });
       } catch (error) {
         this.$message({
           message: error.message || "登录失败",
@@ -117,54 +119,18 @@ export default {
 .login-container {
   position: relative;
   display: flex;
-  justify-content: center;
-  align-items: center;
   height: 100vh;
   background-color: #f5f5f5;
   .login-left {
-    width: 50%;
+    width: 820px;
     height: 100%;
-    background-color: #fff;
-    border-radius: 10px 0 0 10px;
-    .login-left-content {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
   }
   .login-right {
     width: 50%;
     height: 100%;
     background-color: #fff;
     border-radius: 0 10px 10px 0;
-    .login-right-content {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      .login-form-wrapper {
-        width: 400px;
-        height: 400px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        .logo {
-          width: 40px;
-          height: 40px;
-          margin-bottom: 20px;
-          img {
-            width: 100%;
-            height: 100%;
-          }
-        }
-      }
-    }
+   
   }
 }
 </style>
