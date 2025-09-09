@@ -130,6 +130,7 @@ const whiteList = ["/login", "/404"];
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem("token");
+  console.log(token, to);
   if (whiteList.includes(to.path)) {
     if (token && to.path === "/login") {
       next("/dashboard");
@@ -138,6 +139,7 @@ router.beforeEach((to, from, next) => {
     }
   } else {
     if (token) {
+      console.log("有token", typeof token);
       next();
     } else {
       next("/login");

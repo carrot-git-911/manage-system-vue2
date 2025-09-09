@@ -1,7 +1,7 @@
 import { login, getUserInfo, logout } from "@/api/auth";
 
 const state = {
-  token: localStorage.getItem("token"),
+  token: localStorage.getItem("token") || null,
   userInfo: {},
 };
 
@@ -24,8 +24,11 @@ const actions = {
       const res = await login(loginForm);
       if (res.code === 200) {
         // 存储 token 到 localStorage
-        localStorage.setItem("token", res.token);
-        commit("SET_TOKEN", res.token);
+        const token = res.data?.token;
+        if (token) {
+          localStorage.setItem("token", token);
+          commit("SET_TOKEN", token);
+        }
         return { success: true, data: res.data };
       } else {
         return { success: false, message: res.msg || "登录失败" };

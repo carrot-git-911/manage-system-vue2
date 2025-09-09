@@ -46,6 +46,7 @@ export const authHandlers = [
   // 获取用户信息接口
   http.get("/api/auth/userinfo", async ({ request }) => {
     await delay(200);
+    console.log(request);
     const token = request.headers.get("token");
     if (!token) {
       return createResponse({}, 401, "未提供认证令牌");

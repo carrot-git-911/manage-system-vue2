@@ -1,54 +1,64 @@
 <template>
   <div class="login-container">
-    <div class="login-left">
-      <img src="@/assets/images/login_bg.png" alt="">
-    </div>
-    <div class="login-right">
-      <div class="login-right-content">
-        <!-- 登录表单 -->
-        <div class="login-form-wrapper">
-          <div class="logo">
-            <img src="@/assets/logo.png" alt="Shipla" />
-          </div>
-          <h2>登录Shipla ERP 后台管理系统</h2>
-          <el-form
-            ref="loginForm"
-            :model="loginForm"
-            :rules="loginRules"
-            label-width="120px"
-          >
-            <el-form-item prop="username" label="用户名或邮箱">
-              <el-input
-                v-model="loginForm.username"
-                placeholder="请输入用户名或邮箱"
-              />
-            </el-form-item>
-            <el-form-item prop="password" label="密码">
-              <el-input
-                v-model="loginForm.password"
-                placeholder="请输入密码"
-                type="password"
-              />
-            </el-form-item>
-            <el-form-item>
-              <!-- <el-checkbox v-model="rememberPassword" style="margin-left: 10px"
-                >记住密码</el-checkbox
-              >
-              <el-link type="primary" style="margin-left: 20px"
-                >忘记密码</el-link
-              > -->
-            </el-form-item>
-            <el-form-item>
-              <el-button
-                type="primary"
-                style="width: 100%"
-                @click="login"
-                :loading="loginLoading"
-                >登录</el-button
-              >
-            </el-form-item>
-          </el-form>
+    <div class="login-box">
+      <div class="login-image-container">
+        <div class="login-image"></div>
+      </div>
+      <div class="login-form-container">
+        <div class="login-logo">
+          <h2>登录</h2>
+          <p>登录后即可查看和管理系统</p>
         </div>
+        <el-form :model="loginForm" :rules="loginRules" ref="loginForm">
+          <el-form-item prop="username">
+            <el-input
+              v-model="loginForm.username"
+              placeholder="请输入用户名或邮箱"
+            >
+              <i slot="prefix" class="el-input__icon el-icon-user"></i>
+            </el-input>
+          </el-form-item>
+          <!-- 密码 -->
+          <el-form-item prop="password">
+            <el-input
+              v-model="loginForm.password"
+              placeholder="请输入密码"
+              :type="showPassword ? 'text' : 'password'"
+            >
+              <i slot="prefix" class="el-input__icon el-icon-lock"></i>
+              <i
+                slot="suffix"
+                :class="showPassword ? 'el-icon-open' : 'el-icon-turn-off'"
+                class="password-toggle-icon"
+                @click="togglePasswordVisibility"
+                :title="showPassword ? '隐藏密码' : '显示密码'"
+              ></i>
+            </el-input>
+          </el-form-item>
+          <!--  -->
+          <div class="login-form-actions">
+            <el-checkbox v-model="rememberMe">记住我</el-checkbox>
+            <el-link type="primary" @click="handleRegister">忘记密码?</el-link>
+          </div>
+          <!-- 登录按钮 -->
+          <el-form-item>
+            <el-button
+              type="primary"
+              :loading="loginLoading"
+              size="mini"
+              class="login-button"
+              @click="login"
+            >
+              登录
+            </el-button>
+          </el-form-item>
+          <div class="register-link">
+            <span>还没有账号?</span>
+            <router-link to="/register" class="create-account">
+              立即注册
+            </router-link>
+          </div>
+        </el-form>
       </div>
     </div>
   </div>
@@ -76,6 +86,7 @@ export default {
       showPassword: false,
       rememberPassword: false,
       loginLoading: false,
+      rememberMe: false,
     };
   },
   methods: {
@@ -101,7 +112,7 @@ export default {
         await this.$store.dispatch("user/getUserInfo");
 
         // 登录成功，跳转到首页
-        this.$router.push({ path: "/dashboard" });
+        // this.$router.push({ path: "/dashboard" });
       } catch (error) {
         this.$message({
           message: error.message || "登录失败",
@@ -111,6 +122,12 @@ export default {
         this.loginLoading = false;
       }
     },
+    togglePasswordVisibility() {
+      this.showPassword = !this.showPassword;
+    },
+    handleRegister() {
+      // this.$router.push({ path: "/register" });
+    },
   },
 };
 </script>
@@ -118,19 +135,70 @@ export default {
 <style lang="scss" scoped>
 .login-container {
   position: relative;
-  display: flex;
   height: 100vh;
-  background-color: #f5f5f5;
-  .login-left {
-    width: 820px;
-    height: 100%;
-  }
-  .login-right {
-    width: 50%;
-    height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  .login-box {
+    width: 80%;
+    max-width: 1000px;
+    height: 700px;
     background-color: #fff;
-    border-radius: 0 10px 10px 0;
-   
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    .login-image-container {
+      width: 50%;
+      height: 100%;
+      background: url(https://vuejs-core.cn/vue3-admin-better/static/background..jpg)
+        center center no-repeat;
+      background-size: cover;
+    }
+    .login-form-container {
+      width: 50%;
+      padding: 50px;
+      display: flex;
+      flex-direction: column;
+      .login-logo {
+        margin-bottom: 40px;
+        text-align: center;
+      }
+      .login-form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .login-button {
+        width: 100%;
+        height: 45px;
+        border-radius: 22px;
+        font-size: 16px;
+        font-weight: 500;
+        letter-spacing: 1px;
+        background: linear-gradient(90deg, #409eff 0%, #007aff 100%);
+        border: none;
+        margin-top: 15px;
+      }
+      .register-link {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 14px;
+        .create-account {
+          color: #409eff;
+        }
+      }
+    }
+  }
+}
+
+.password-toggle-icon {
+  cursor: pointer;
+  color: #c0c4cc;
+  transition: color 0.3s;
+
+  &:hover {
+    color: #409eff;
   }
 }
 </style>
