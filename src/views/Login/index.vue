@@ -112,7 +112,7 @@ export default {
         await this.$store.dispatch("user/getUserInfo");
 
         // 登录成功，跳转到首页
-        // this.$router.push({ path: "/dashboard" });
+        this.$router.push({ path: "/dashboard" });
       } catch (error) {
         this.$message({
           message: error.message || "登录失败",

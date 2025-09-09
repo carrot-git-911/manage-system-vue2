@@ -1,7 +1,7 @@
 import axios from "axios";
 import { MessageBox, Message } from "element-ui";
 import store from "@/store";
-// import { getToken } from "@/utils/auth";
+import { getToken } from "@/utils/auth";
 
 // 创建 axios 实例，使用环境变量配置
 const service = axios.create({
@@ -19,8 +19,13 @@ service.interceptors.request.use(
   (config) => {
     // 在发送请求之前做些什么
     if (store.getters.token) {
-      // config.headers["token"] = getToken();
+      config.headers["token"] = getToken();
     }
+    // 配置请求头
+    config.headers["Content-Type"] = "application/json";
+    config.headers['Accept'] = 'application/json'
+    config.headers['Accept-Language'] = store.getters.language || 'zh-CN'
+    config.headers['Authorization'] = 'Bearer ' + getToken()
     return config;
   },
   (error) => {
