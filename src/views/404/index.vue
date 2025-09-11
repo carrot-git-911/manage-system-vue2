@@ -111,9 +111,9 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: rgba(249, 253, 255, 0.8);
+    // background: rgba(249, 253, 255, 0.8);
     border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    // box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     padding: 60px 40px;
     backdrop-filter: blur(10px);
     animation: fadeInUp 0.8s ease-out;
@@ -202,20 +202,20 @@ export default {
     border-radius: 8px;
     font-weight: 500;
     transition: all 0.3s ease;
-  }
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  }
-  &.el-button--primary {
-    background: linear-gradient(135deg, $primary-color 0%, #5a9fd4 100%);
-    border: none;
     &:hover {
-      background: linear-gradient(135deg, #3a8ee6 0%, #4a8fc4 100%);
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     }
-  }
-  i {
-    margin-right: 8px;
+    &.el-button--primary {
+      background: linear-gradient(135deg, $primary-color 0%, #5a9fd4 100%);
+      border: none;
+      &:hover {
+        background: linear-gradient(135deg, #3a8ee6 0%, #4a8fc4 100%);
+      }
+    }
+    i {
+      margin-right: 8px;
+    }
   }
 }
 
@@ -244,10 +244,11 @@ export default {
           transform: translateX(4px);
         }
 
+        /* 为建议链接添加箭头图标 */
         &::before {
-          content: "→";
-          margin-right: 8px;
-          transition: transform 0.3s ease;
+          content: "→"; /* 使用箭头符号作为前缀 */
+          margin-right: 8px; /* 设置箭头与文字的间距 */
+          // transition: transform 0.3s ease; /* 添加transform过渡动画效果 */
         }
       }
     }

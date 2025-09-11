@@ -31,9 +31,19 @@ export const constantRoutes = [
   },
   {
     path: "/404",
+    // component: () => import("@/views/404/index_demo.vue"),
     component: () => import("@/views/404/index.vue"),
     meta: {
       title: "404",
+      hidden: true,
+    },
+  },
+  {
+    path: "/401",
+    // component: () => import("@/views/401/index_demo.vue"),
+    component: () => import("@/views/401/index.vue"),
+    meta: {
+      title: "401",
       hidden: true,
     },
   },
