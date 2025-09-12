@@ -23,6 +23,7 @@ Vue.use(Router);
 export const constantRoutes = [
   {
     path: "/login",
+    name: "login",
     component: () => import("@/views/Login/index.vue"),
     meta: {
       title: "登录",
@@ -31,6 +32,7 @@ export const constantRoutes = [
   },
   {
     path: "/404",
+    name: "notFound",
     // component: () => import("@/views/404/index_demo.vue"),
     component: () => import("@/views/404/index.vue"),
     meta: {
@@ -40,6 +42,7 @@ export const constantRoutes = [
   },
   {
     path: "/401",
+    name: "notAllow",
     // component: () => import("@/views/401/index_demo.vue"),
     component: () => import("@/views/401/index.vue"),
     meta: {
@@ -58,6 +61,7 @@ export const constantRoutes = [
     children: [
       {
         path: "/dashboard",
+        name: "dashboard",
         component: () => import("@/views/Dashboard/index.vue"), // TODO: 文件夹名字大小写问题
         meta: {
           title: "首页",
@@ -136,7 +140,7 @@ export const resetRouter = () => {
 // });
 
 // 路由守卫二
-const whiteList = ["/login", "/404"];
+const whiteList = ["/login", "/404", "401"];
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem("token");

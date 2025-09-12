@@ -1,18 +1,17 @@
 <template>
   <div class="app-wrapper" :class="classObj">
     <!-- 侧边栏 -->
-    <div class="sidebar-container" :style="sidebarStyle">
+    <!-- <div class="sidebar-container" :style="sidebarStyle">
       <Sidebar />
-    </div>
+    </div> -->
+    <Sidebar class="sidebar-container" />
     <div class="main-container" :style="mainContainerStyle">
       <!-- 固定头部 -->
       <div class="fixed-header">
         <Navbar />
       </div>
       <!-- 内容区域 -->
-      <div class="content-container">
-        <Main />
-      </div>
+      <AppMain />
     </div>
   </div>
 </template>
@@ -21,14 +20,14 @@
 import { mapGetters, mapActions } from "vuex";
 import Sidebar from "@/components/common/Layout/components/Sidebar";
 import Navbar from "@/components/common/Layout/components/Navbar";
-import Main from "@/components/common/Layout/components/Main";
+import AppMain from "@/components/common/Layout/components/AppMain.vue";
 
 export default {
   name: "Layout",
   components: {
     Sidebar,
     Navbar,
-    Main,
+    AppMain,
   },
   computed: {
     ...mapGetters(["sidebar", "device", "sidebarWidth"]),

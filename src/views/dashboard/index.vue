@@ -1,15 +1,22 @@
 <template>
-  <h1>dashboard</h1>
+  <div class="dashboard-container">
+    <component :is="currentComponent" />
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'Dashboard',
-}
+  name: "Dashboard",
+  data() {
+    return {
+      currentComponent: "AdminDashboard",
+    };
+  },
+};
 </script>
 
 <style lang="scss" scoped>
-h1 {
-  color: #333;
+.dashboard-container {
+  
 }
 </style>
