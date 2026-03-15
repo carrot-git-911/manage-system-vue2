@@ -1,0 +1,58 @@
+---
+description: 生成 Git 提交信息时使用中文与 Conventional Commits 格式
+alwaysApply: false
+---
+# 提交信息规范
+
+生成或建议的**每一条**提交信息都必须同时满足：
+1. **以 type 开头**：必须是 `feat`、`fix`、`docs`、`style`、`refactor`、`perf`、`test`、`chore`、`ci` 之一，紧跟英文冒号和空格，再跟描述。
+2. **描述使用中文**。
+
+## 唯一合法格式
+
+```
+<type>(<scope>): <subject>
+```
+或（无 scope 时）：
+```
+<type>: <subject>
+```
+
+- **type**：**必填**，仅使用下面列表中的英文小写单词，且必须出现在提交信息最前面。
+- **scope**：可选，模块/范围（英文）。
+- **subject**：必填，简短描述，**必须使用中文**。
+
+❌ 错误示例（缺少 type，不能这样写）：
+- `添加登录接口`
+- `修复分页问题`
+
+✅ 正确示例（必须带 type）：
+- `feat(user): 添加登录接口`
+- `fix(api): 修复分页问题`
+
+## 允许的 type
+
+| type       | 含义           |
+| ---------- | -------------- |
+| feat       | 新功能         |
+| fix        | 修复 bug       |
+| docs       | 仅文档         |
+| style      | 格式（不影响逻辑） |
+| refactor   | 重构           |
+| perf       | 性能优化       |
+| test       | 测试相关       |
+| chore      | 构建/工具/依赖  |
+| ci         | CI 配置或脚本   |
+
+## 示例
+
+- `feat(user): 添加登录接口`
+- `fix(api): 修正列表分页参数错误`
+- `docs: 更新 README 安装说明`
+- `chore(deps): 升级 vue-router 到 3.5.1`
+
+## 要求
+
+- **提交信息必须以 type 开头**（如 `feat:`、`fix:`），不能只写中文描述。
+- 提交信息主体（subject）**必须使用中文**。
+- type 与 scope 使用英文，与 `commitlint.config.js` 保持一致，以便通过 commitlint 校验。
