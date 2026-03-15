@@ -7,10 +7,10 @@ module.exports = defineConfig({
     port: 8080,
     open: true,
     proxy: {
-      '/api': {
+      [process.env.VUE_APP_BASE_API]: {
         target: 'http://localhost:3000',
-        changeOrigin: true,
-        pathRewrite: { '^/api': '' }
+        changeOrigin: true, // 允许跨域
+        pathRewrite: { [`^${process.env.VUE_APP_BASE_API}`]: '' }
       }
     }
   },
