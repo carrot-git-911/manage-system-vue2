@@ -50,6 +50,9 @@ module.exports = {
     // 模板中的组件名必须使用 PascalCase（如 <MyButton>），与 JS 导入命名保持一致
     'vue/component-name-in-template-casing': ['error', 'PascalCase'],
 
+    // 组件名可以不使用多单词命名，因为 Vue 组件名是按文件名自动推导的
+    'vue/multi-word-component-names': 'off',
+
     // 禁止直接使用 v-html，防止 XSS 攻击（仍可用但会收到警告，需人工审查）
     'vue/no-v-html': 'warn',
 

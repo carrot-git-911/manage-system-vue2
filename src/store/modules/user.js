@@ -1,14 +1,11 @@
 const TokenKey = 'accessToken'
-const RefreshTokenKey = 'refreshToken'
 
 const state = {
-  token: localStorage.getItem(TokenKey) || '',
-  refreshToken: localStorage.getItem(RefreshTokenKey) || ''
+  token: localStorage.getItem(TokenKey) || ''
 }
 
 const getters = {
-  token: state => state.token,
-  refreshToken: state => state.refreshToken
+  token: state => state.token
 }
 
 const mutations = {
@@ -20,35 +17,22 @@ const mutations = {
       localStorage.removeItem(TokenKey)
     }
   },
-  SET_REFRESH_TOKEN(state, refreshToken) {
-    state.refreshToken = refreshToken
-    if (refreshToken) {
-      localStorage.setItem(RefreshTokenKey, refreshToken)
-    } else {
-      localStorage.removeItem(RefreshTokenKey)
-    }
-  },
   RESET_TOKEN(state) {
     state.token = ''
-    state.refreshToken = ''
     localStorage.removeItem(TokenKey)
-    localStorage.removeItem(RefreshTokenKey)
   }
 }
 
 const actions = {
-  // 登录成功后写入双 Token（由登录页或 API 层调用）
-  setTokens({ commit }, { accessToken, refreshToken }) {
-    commit('SET_TOKEN', accessToken)
-    commit('SET_REFRESH_TOKEN', refreshToken)
-  },
+  // 设置 Token
   setToken({ commit }, payload) {
     const accessToken =
-      typeof payload === 'string' ? payload : payload?.accessToken
-    const refreshToken = payload?.refreshToken
+      typeof payload === 'string'
+        ? payload
+        : payload?.accessToken || payload?.token
     if (accessToken) commit('SET_TOKEN', accessToken)
-    if (refreshToken) commit('SET_REFRESH_TOKEN', refreshToken)
   },
+  // 登出
   logout({ commit }) {
     commit('RESET_TOKEN')
   }
