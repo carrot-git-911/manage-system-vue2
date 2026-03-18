@@ -1,0 +1,27 @@
+---
+description: 保证 AI 生成和修改的代码严格符合当前项目的 ESLint 与 Prettier 规则
+alwaysApply: true
+---
+
+# ESLint & Prettier 规范约束
+
+- **统一使用项目配置**
+  - 所有代码必须符合根目录下 `.eslintrc.js` 与 `.prettierrc.js` 的规则。
+  - 不得假设其它默认规则或自定义格式化方案。
+
+- **生成代码时的约束**
+  - 生成或修改任何 JS/TS/Vue/配置代码时，必须保证示例代码在本项目中理论上能通过 ESLint 与 Prettier 检查（语法正确、风格一致）。
+  - 按 `.prettierrc.js` 的设置书写代码：2 空格缩进、单引号、无行尾分号（`semi: false`）、无多余尾逗号等。
+  - 遵守 `.eslintrc.js` 中的关键规则，例如：禁止使用 `var`、优先使用 `const`、使用严格相等 `===` 等。
+
+- **禁止规避校验**
+  - **不要** 随意新增、修改或删除 ESLint/Prettier 配置文件，只能在用户明确要求时调整。
+  - **不要** 通过大面积增加 `eslint-disable`、`eslint-disable-next-line`、`// prettier-ignore` 等方式绕过校验；如确需使用，必须在极小范围内并给出合理技术理由。
+
+- **存在潜在不符合规则的地方时的处理**
+  - 如为了便于说明而给出简化示例，需在说明文字中明确标注“示例代码需按本项目 ESLint/Prettier 规则进一步调整”。
+  - 当用户反馈有 ESLint 或 Prettier 报错时，优先通过调整代码本身来解决，而不是修改规则或关闭检查。
+
+- **与工具链的配合**
+  - 在建议命令或流程时，优先推荐使用本项目既有脚本（例如 `npm run lint`、`npm run lint:fix`、`npm run format` 等，如果存在的话），而不是自创命令。
+
