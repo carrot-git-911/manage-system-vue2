@@ -1,0 +1,67 @@
+---
+description: MSW 2 模拟接口的文件结构、路径与响应体格式，与业务请求封装一致
+globs: src/mock/**/*.js
+alwaysApply: false
+---
+
+# MSW 模拟接口统一规范
+
+编写或修改本项目的 Mock Service Worker（msw v2）时，必须遵守下列约定，并与 `src/utils/request.js`、`.env.development` 中的 `VUE_APP_BASE_API` 保持一致。
+
+## 文件与导出
+
+- **按业务域拆分**：每个文件放在 `src/mock/handlers/`，命名与业务一致，例如 `auth.js`、`user.js`。
+- **统一导出**：每个文件导出一个处理器数组，命名为 `{域}Handlers`（与文件名对应），例如 `export const authHandlers = [ ... ]`。
+- **聚合入口**：在 `src/mock/handlers/index.js` 中汇总并导出完整列表，例如 `export const handlers = [...authHandlers, ...otherHandlers]`，供 `setupWorker` / `setupServer` 使用。
+- **禁止**在 `handlers` 目录使用 `var`；风格遵循项目 ESLint / Prettier（单引号、无分号等）。
+
+## 请求路径
+
+- 浏览器里 axios 的 URL = `baseURL + url`。开发环境 `VUE_APP_BASE_API` 默认为 `/api`，因此 handler 的路径须带此前缀，且与 `src/api/modules/*.js` 中的 `url` **拼接后一致**。
+- 示例：接口 `url: '/auth/login'` → handler 使用 `http.post('/api/auth/login', ...)`（若 `VUE_APP_BASE_API` 变更，同步改 mock 路径）。
+- 使用 **msw v2** API：`import { http, HttpResponse, delay } from 'msw'`；需要模拟慢请求时再使用 `delay`。
+
+## 响应体（与拦截器契约一致）
+
+成功与失败均返回 **JSON 对象**，字段与后端约定对齐，且能被 `request.js` 响应拦截器解析：
+
+| 字段 | 说明 |
+|------|------|
+| `code` | 成功必须为 **200**（与 `SUCCESS_CODE` 一致）；失败为非 200 的业务码 |
+| `message` | 人类可读说明；失败时前端会用于 `Message.error` |
+| `data` | 成功时为业务数据；失败时可为 `null` 或 `{}` |
+
+- 优先使用 `HttpResponse.json({ code, message, data })`。
+- **不要**只返回裸业务对象（例如直接 `{ token: '...' }`），否则与真实接口不一致、拦截器行为对不上。
+
+## 推荐写法示例
+
+```js
+import { http, HttpResponse, delay } from 'msw'
+
+const ok = (data, message = 'ok') =>
+  HttpResponse.json({ code: 200, message, data })
+
+const fail = (code, message, data = null) =>
+  HttpResponse.json({ code, message, data })
+
+export const authHandlers = [
+  http.post('/api/auth/login', async ({ request }) => {
+    const body = await request.json()
+    // await delay(200)
+    if (!body?.username) {
+      return fail(400, '缺少用户名')
+    }
+    return ok({ token: 'mock-token', username: body.username })
+  })
+]
+```
+
+## 自检清单
+
+- [ ] 路径是否等于 `VUE_APP_BASE_API + 业务 url`（当前开发默认 `/api` + `url`）？
+- [ ] 响应是否始终包含 `code`、`message`、`data`？
+- [ ] 成功时 `code === 200`？
+- [ ] 新域是否已在 `handlers/index.js` 中合并进总 `handlers`？
+
+若在未打开 `src/mock` 文件时也要生成 MSW，请显式引用本规则或 `@msw-mock-handlers`。
