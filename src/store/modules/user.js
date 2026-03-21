@@ -1,4 +1,4 @@
-const TokenKey = 'accessToken'
+const TokenKey = 'accessToken' // 登录 token 的 key
 
 const state = {
   token: localStorage.getItem(TokenKey) || ''
@@ -9,6 +9,7 @@ const getters = {
 }
 
 const mutations = {
+  // 设置 Token
   SET_TOKEN(state, token) {
     state.token = token
     if (token) {
@@ -17,6 +18,7 @@ const mutations = {
       localStorage.removeItem(TokenKey)
     }
   },
+  // 重置 Token
   RESET_TOKEN(state) {
     state.token = ''
     localStorage.removeItem(TokenKey)
@@ -26,13 +28,9 @@ const mutations = {
 const actions = {
   // 设置 Token
   setToken({ commit }, payload) {
-    const accessToken =
-      typeof payload === 'string'
-        ? payload
-        : payload?.accessToken || payload?.token
-    if (accessToken) commit('SET_TOKEN', accessToken)
+    commit('SET_TOKEN', payload)
   },
-  // 登出
+  // 登出-清除 Token
   logout({ commit }) {
     commit('RESET_TOKEN')
   }

@@ -1,18 +1,34 @@
 import { http, HttpResponse, delay } from 'msw'
+import { findMockUser } from '../data/auth'
 
-const ok = (data, message = 'ok') =>
-  HttpResponse.json({
-    code: 200,
-    message,
-    data
-  })
+const ok = (data, message = 'ok', status = 200) =>
+  HttpResponse.json(
+    {
+      code: 200,
+      message,
+      data
+    },
+    { status }
+  )
 
-const fail = (code, message, data = null) =>
-  HttpResponse.json({
-    code,
-    message,
-    data
-  })
+const fail = (code, message, data = null, status = 400) =>
+  HttpResponse.json(
+    {
+      code,
+      message,
+      data
+    },
+    { status }
+  )
+
+/** 密码正确后仍不允许登录的场景（与 mock/data 中 loginRestriction 对应） */
+const LOGIN_RESTRICTION_RESPONSE = {
+  session_expired: [40103, '登录已过期，请重新登录', 401],
+  remote_login: [40104, '账号已在其他设备登录，请重新验证', 401],
+  account_disabled: [40301, '账号已被禁用', 403],
+  account_locked: [40302, '登录失败次数过多，账号已锁定', 403],
+  login_rate_limited: [42901, '登录尝试过于频繁，请稍后再试', 429]
+}
 
 export const authHandlers = [
   // 登录
@@ -22,21 +38,34 @@ export const authHandlers = [
     const username = body?.username?.trim?.()
     const password = body?.password
 
-    if (!username || !password) {
-      return fail(400, '用户名或密码不能为空')
+    if (!username) {
+      return fail(40001, '请输入账号')
     }
 
-    if (username !== 'admin' || password !== '123456') {
-      return fail(401, '用户名或密码错误')
+    if (!password) {
+      return fail(40002, '请输入密码')
+    }
+
+    const user = findMockUser(username)
+    if (!user) {
+      return fail(40101, '账号不存在', null, 401)
+    }
+
+    if (user.password !== password) {
+      return fail(40102, '密码错误', null, 401)
+    }
+
+    if (user.loginRestriction) {
+      const cfg = LOGIN_RESTRICTION_RESPONSE[user.loginRestriction]
+      if (cfg) {
+        return fail(cfg[0], cfg[1], null, cfg[2])
+      }
     }
 
     return ok(
       {
-        token: 'mock-admin-token',
-        userInfo: {
-          username: 'admin',
-          nickname: '管理员'
-        }
+        token: user.token,
+        userInfo: user.userInfo
       },
       '登录成功'
     )

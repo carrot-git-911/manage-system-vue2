@@ -60,12 +60,13 @@ export default {
         this.submitLoading = true
         try {
           const data = await login(this.form)
-          console.log(data)
-          this.$store.dispatch('user/setToken', data)
+          this.$store.dispatch('user/setToken', data.token)
           this.submitLoading = false
           this.$message.success('登录成功')
-          this.$router.push('/')
-        } catch {
+          this.$router.push('/') // 跳转首页
+        } catch (error) {
+          console.log(error)
+        } finally {
           this.submitLoading = false
         }
       })

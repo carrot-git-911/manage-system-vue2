@@ -1,5 +1,5 @@
 ---
-description: MSW 2 模拟接口的文件结构、路径与响应体格式，与业务请求封装一致
+description: MSW 2 模拟接口的文件结构、路径与响应体格式（统一 code/message/data，与 request 契约及主流接口规范对齐）
 globs: src/mock/**/*.js
 alwaysApply: false
 ---
@@ -21,18 +21,51 @@ alwaysApply: false
 - 示例：接口 `url: '/auth/login'` → handler 使用 `http.post('/api/auth/login', ...)`（若 `VUE_APP_BASE_API` 变更，同步改 mock 路径）。
 - 使用 **msw v2** API：`import { http, HttpResponse, delay } from 'msw'`；需要模拟慢请求时再使用 `delay`。
 
-## 响应体（与拦截器契约一致）
+## 响应信封（主流约定 + 本项目契约）
 
-成功与失败均返回 **JSON 对象**，字段与后端约定对齐，且能被 `request.js` 响应拦截器解析：
+成功与失败均返回 **JSON 对象**，结构统一为 **`code` + `message` + `data`**，与后端及前端拦截器约定对齐。
 
 | 字段 | 说明 |
 |------|------|
-| `code` | 成功必须为 **200**（与 `SUCCESS_CODE` 一致）；失败为非 200 的业务码 |
-| `message` | 人类可读说明；失败时前端会用于 `Message.error` |
-| `data` | 成功时为业务数据；失败时可为 `null` 或 `{}` |
+| `code` | **业务状态码**（数字）。本项目成功码固定为 **200**，与 `src/utils/request.js` 中 `SUCCESS_CODE` 一致；失败为非 200。 |
+| `message` | 人类可读说明；失败时前端拦截器会用于 `Message.error`。勿包含敏感信息、堆栈、SQL。 |
+| `data` | 成功时为业务数据（对象、数组、分页对象等）；失败时建议 **`null`**（或团队统一为 `{}`，全项目一致即可）。 |
 
 - 优先使用 `HttpResponse.json({ code, message, data })`。
 - **不要**只返回裸业务对象（例如直接 `{ token: '...' }`），否则与真实接口不一致、拦截器行为对不上。
+
+### 业务码分段（建议，便于扩展与文档化）
+
+与主流做法一致，失败码可按区间表意（**成功仍为 200**，与下表不冲突）：
+
+| 区间 | 含义 | 示例场景 |
+|------|------|----------|
+| **200** | 成功 | 唯一成功码（本项目） |
+| **401xx** | 认证/登录 | token 无效、未登录 |
+| **403xx** | 权限 | 已登录但无操作权限 |
+| **404xx** | 资源 | 用户/订单不存在 |
+| **409xx** | 冲突 | 重复提交、状态不允许 |
+| **422xx** | 校验 | 表单/字段级错误（可在 `data` 中带 `errors` 或字段映射） |
+| **4xxxx** | 其他客户端错误 | 参数缺失、格式错误（如 `40001` 缺少必填） |
+| **5xxxx** | 服务端错误 | 模拟下游超时、内部错误（`message` 对用户宜泛化） |
+
+简单场景仍可用 **HTTP 语义相近的三位数**（如 `400`、`401`）作为 `code`，但长期建议迁移到上表区间，避免与 HTTP 状态码混淆。
+
+### HTTP 状态码（可选，与后端对齐时）
+
+- **主流做法**：用 HTTP 状态表达大类（400/401/403/404/500…），用 body 的 `code` 表达细因。
+- **本项目现状**：`request.js` 成功回调里**仅根据 body 的 `code === 200` 判断成功**；若 mock 返回 **非 2xx**，axios 会走 **错误分支**，**不会**执行当前成功分支里的 `Message.error`（需从 `error.response.data` 另行处理）。  
+- **结论**：在**未改请求封装前**，mock 应保持 **`HttpResponse.json` 默认 HTTP 200**，通过 **`code` / `message` / `data`** 区分成败，与现网行为一致。若后端改为 4xx/5xx + body，须**同步修改** `request.js` 后再调整 mock。
+
+### 分页类 `data`（列表接口）
+
+在 `data` 内约定结构，与真实接口一致，例如：
+
+- `list`（或 `items`）+ `total` + `page` + `pageSize`（或 `limit`）；游标分页则用 `list` + `cursor` + `hasMore` 等，**与 `src/api` 及后端文档统一**。
+
+### 校验错误时 `data`（可选）
+
+字段级错误时，可在 `data` 中返回结构化信息（如各字段错误数组），便于表单标红；**简单错误**可仅依赖 `message`，`data` 为 `null`。
 
 ## 推荐写法示例
 
@@ -50,7 +83,7 @@ export const authHandlers = [
     const body = await request.json()
     // await delay(200)
     if (!body?.username) {
-      return fail(400, '缺少用户名')
+      return fail(40001, '缺少用户名')
     }
     return ok({ token: 'mock-token', username: body.username })
   })
@@ -61,7 +94,8 @@ export const authHandlers = [
 
 - [ ] 路径是否等于 `VUE_APP_BASE_API + 业务 url`（当前开发默认 `/api` + `url`）？
 - [ ] 响应是否始终包含 `code`、`message`、`data`？
-- [ ] 成功时 `code === 200`？
+- [ ] 成功时 `code === 200`（与 `SUCCESS_CODE` 一致）？
+- [ ] 失败时 `message` 是否简短可读、无敏感信息？
 - [ ] 新域是否已在 `handlers/index.js` 中合并进总 `handlers`？
 
 若在未打开 `src/mock` 文件时也要生成 MSW，请显式引用本规则或 `@msw-mock-handlers`。

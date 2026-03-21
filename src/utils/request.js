@@ -34,10 +34,7 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
   response => {
-    console.log(response)
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[Response]', response.data)
-    }
+    console.log('response')
     const { code, message, data } = response.data
     if (code === SUCCESS_CODE) {
       return data
@@ -46,7 +43,19 @@ service.interceptors.response.use(
     return Promise.reject(new Error(message || '请求失败'))
   },
   error => {
-    console.log(error)
+    console.log('error')
+    const res = error.response
+    const body = res?.data
+    if (body && typeof body === 'object' && 'code' in body) {
+      const { code, message: msg } = body
+      if (code !== SUCCESS_CODE) {
+        Message.error(msg || '请求失败')
+        return Promise.reject(new Error(msg || '请求失败'))
+      }
+    }
+    Message.error(
+      (res?.data && res.data.message) || error.message || '网络异常'
+    )
     return Promise.reject(error)
   }
 )
