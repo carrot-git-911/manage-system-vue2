@@ -2,8 +2,6 @@ import axios from 'axios'
 import store from '@/store'
 import { Message } from 'element-ui'
 
-const SUCCESS_CODE = 200
-
 // 主请求实例，用于所有业务请求
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
@@ -16,14 +14,6 @@ service.interceptors.request.use(
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`
     }
-    if (process.env.NODE_ENV === 'development') {
-      console.log(
-        '[Request]',
-        config.method?.toUpperCase(),
-        config.url,
-        config.params || config.data
-      )
-    }
     return config
   },
   error => {
@@ -34,28 +24,20 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
   response => {
-    console.log('response')
     const { code, message, data } = response.data
-    if (code === SUCCESS_CODE) {
+    if (code === 200) {
       return data
     }
+    // HTTP 仍是 2xx（Axios成功），但 response.data.code !== 200（业务错误却用了成功 HTTP）时，视为业务错误
     Message.error(message || '请求失败')
     return Promise.reject(new Error(message || '请求失败'))
   },
   error => {
-    console.log('error')
-    const res = error.response
-    const body = res?.data
-    if (body && typeof body === 'object' && 'code' in body) {
-      const { code, message: msg } = body
-      if (code !== SUCCESS_CODE) {
-        Message.error(msg || '请求失败')
-        return Promise.reject(new Error(msg || '请求失败'))
-      }
+    const { code, message } = error?.response?.data || {}
+    if (code === 40103) {
+      // 登录已过期，请重新登录
     }
-    Message.error(
-      (res?.data && res.data.message) || error.message || '网络异常'
-    )
+    Message.error(message || '请求失败')
     return Promise.reject(error)
   }
 )
