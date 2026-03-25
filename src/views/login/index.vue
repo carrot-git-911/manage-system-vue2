@@ -60,8 +60,10 @@ export default {
         this.submitLoading = true
         try {
           const data = await login(this.form)
-          this.$store.dispatch('user/setToken', data.token)
-          this.submitLoading = false
+          this.$store.dispatch('user/setLoginState', {
+            token: data?.token,
+            userInfo: data?.userInfo
+          })
           this.$message.success('登录成功')
           this.$router.push('/') // 跳转首页
         } catch (error) {

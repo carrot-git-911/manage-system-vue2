@@ -8,9 +8,16 @@ const constantRoutes = [
   },
   {
     path: '/',
-    name: 'Dashboard',
-    component: () => import('@/views/dashboard/index.vue'),
-    meta: { title: '首页', icon: 'home', hidden: false }
+    component: () => import('@/layouts/index.vue'),
+    redirect: '/dashboard',
+    children: [
+      {
+        path: 'dashboard',
+        name: 'Dashboard',
+        component: () => import('@/views/dashboard/index.vue'),
+        meta: { title: '首页', icon: 'home' }
+      }
+    ]
   },
   {
     path: '/404',

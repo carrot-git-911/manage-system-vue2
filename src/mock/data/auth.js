@@ -3,7 +3,9 @@
  *
  * roles：角色标识占位，后续与 RBAC / 路由 meta.roles 对齐
  * permissions：权限码占位，后续与按钮 v-permission、接口鉴权对齐
- * （建议使用 resource:action 风格，如 system:user:list）
+ * 使用 resource:action 风格，并区分一级/二级菜单：
+ * - 一级菜单：dashboard:view、system:view
+ * - 二级菜单：system:user:list、system:role:list
  */
 
 export const mockUsers = [
@@ -31,13 +33,7 @@ export const mockUsers = [
       nickname: '内容编辑',
       avatar: '',
       roles: ['editor'],
-      permissions: [
-        'dashboard:view',
-        'content:article:list',
-        'content:article:detail',
-        'content:article:create',
-        'content:article:edit'
-      ]
+      permissions: ['dashboard:view', 'system:view', 'system:user:list']
     }
   },
   {
@@ -50,11 +46,7 @@ export const mockUsers = [
       nickname: '只读访客',
       avatar: '',
       roles: ['viewer'],
-      permissions: [
-        'dashboard:view',
-        'content:article:list',
-        'content:article:detail'
-      ]
+      permissions: ['dashboard:view']
     }
   },
   // 以下账号用于联调/演示异常登录场景（密码均为 123456）
