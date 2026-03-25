@@ -65,7 +65,8 @@ export default {
             userInfo: data?.userInfo
           })
           this.$message.success('登录成功')
-          this.$router.push('/') // 跳转首页
+          const redirect = this.$route?.query?.redirect
+          this.$router.push(redirect || '/') // 支持登录前的回跳
         } catch (error) {
           console.log(error)
         } finally {

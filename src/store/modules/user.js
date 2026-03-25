@@ -1,9 +1,27 @@
 const TokenKey = 'accessToken' // 登录 token 的 key
+const UserInfoKey = 'userInfo'
+const PermissionsKey = 'permissions'
+
+/**
+ * 安全解析 JSON 字符串
+ */
+const safeJsonParse = value => {
+  if (!value) return null
+  try {
+    return JSON.parse(value)
+  } catch (e) {
+    return null
+  }
+}
 
 const state = {
   token: localStorage.getItem(TokenKey) || '',
-  userInfo: null,
-  permissions: []
+  userInfo: safeJsonParse(localStorage.getItem(UserInfoKey)),
+  permissions: Array.isArray(
+    safeJsonParse(localStorage.getItem(PermissionsKey))
+  )
+    ? safeJsonParse(localStorage.getItem(PermissionsKey))
+    : []
 }
 
 const getters = {
@@ -30,10 +48,20 @@ const mutations = {
   // 设置用户信息
   SET_USER_INFO(state, userInfo) {
     state.userInfo = userInfo || null
+    if (userInfo) {
+      localStorage.setItem(UserInfoKey, JSON.stringify(userInfo))
+    } else {
+      localStorage.removeItem(UserInfoKey)
+    }
   },
   // 设置权限列表
   SET_PERMISSIONS(state, permissions) {
     state.permissions = Array.isArray(permissions) ? permissions : []
+    if (state.permissions.length > 0) {
+      localStorage.setItem(PermissionsKey, JSON.stringify(state.permissions))
+    } else {
+      localStorage.removeItem(PermissionsKey)
+    }
   },
   // 清理登录态
   RESET_AUTH_STATE(state) {
@@ -41,6 +69,8 @@ const mutations = {
     state.userInfo = null
     state.permissions = []
     localStorage.removeItem(TokenKey)
+    localStorage.removeItem(UserInfoKey)
+    localStorage.removeItem(PermissionsKey)
   }
 }
 
@@ -71,6 +101,8 @@ const actions = {
   // 登出-清除登录态
   logout({ commit }) {
     commit('RESET_AUTH_STATE')
+    // 刷新页面重新初始化路由注入状态（动态路由无法可靠撤销）
+    window.location.reload()
   }
 }
 

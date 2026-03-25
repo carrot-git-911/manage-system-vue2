@@ -4,6 +4,7 @@ import '@/styles/index.scss'
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
+import '@/router/permission'
 import store from './store'
 
 import '@/utils/element' // Element UI 按需引入（组件注册与 $message 等）
