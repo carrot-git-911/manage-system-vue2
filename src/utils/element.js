@@ -11,7 +11,13 @@ import {
   Pagination,
   Message,
   MessageBox,
-  Notification
+  Notification,
+  Menu,
+  Submenu,
+  MenuItem,
+  Dropdown,
+  DropdownMenu,
+  DropdownItem
 } from 'element-ui'
 
 // 按需注册组件
@@ -24,6 +30,12 @@ Vue.use(Option)
 Vue.use(Table)
 Vue.use(TableColumn)
 Vue.use(Pagination)
+Vue.use(Menu)
+Vue.use(Submenu)
+Vue.use(MenuItem)
+Vue.use(Dropdown)
+Vue.use(DropdownMenu)
+Vue.use(DropdownItem)
 
 // 非组件式 API 挂到 Vue 原型，方便 this.$message / this.$confirm 等
 Vue.prototype.$message = Message

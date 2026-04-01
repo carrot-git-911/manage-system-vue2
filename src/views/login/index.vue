@@ -53,6 +53,9 @@ export default {
     }
   },
   methods: {
+    /**
+     * 登录
+     */
     handleLogin() {
       if (this.submitLoading) return
       this.$refs.loginForm.validate(async valid => {
